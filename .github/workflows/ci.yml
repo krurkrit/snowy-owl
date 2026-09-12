@@ -1,0 +1,39 @@
+---
+name: Snowy Owl CI
+"on":
+  pull_request:
+  push:
+    branches:
+      - main
+permissions:
+  contents: read
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: python -m pip install .
+      - name: Build and validate
+        shell: pwsh
+        run: ./scripts/build.ps1 -All
+      - name: Check portable installer prerequisites
+        shell: pwsh
+        run: ./install.ps1 -Check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snowy-owl-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/*
+            generated/**
+            apps/*/install.ps1
+            scripts/install-common.ps1
+            install.ps1
+            uninstall.ps1
+            docs/images/*.png

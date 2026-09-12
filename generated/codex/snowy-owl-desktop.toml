@@ -1,0 +1,62 @@
+[desktop]
+appearanceDiffMarkerStyle = "color"
+appearanceLightCodeThemeId = "codex"
+appearanceTheme = "system"
+avatar-overlay-mascot-width-px = 90
+codeFontSize = 14
+sansFontSize = 14
+usePointerCursors = true
+
+[desktop.appearanceLightChromeTheme]
+accent = "#1450A0"
+accentSource = "chatgpt"
+contrast = 50
+ink = "#34383C"
+opaqueWindows = true
+surface = "#F8F9FA"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "JetBrains Mono"
+ui = "Inter"
+
+[desktop.appearanceLightChromeTheme.fonts.codeFace]
+family = "JetBrains Mono"
+fullName = "JetBrains Mono Medium"
+postscriptName = "JetBrainsMono-Medium"
+
+[desktop.appearanceLightChromeTheme.fonts.uiFace]
+family = "Inter"
+fullName = "Inter Medium"
+postscriptName = "Inter-Medium"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#12633D"
+diffRemoved = "#A52834"
+skill = "#751ed9"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "#FD7E14"
+accentSource = "chatgpt"
+contrast = 50
+ink = "#F8F9FA"
+opaqueWindows = true
+surface = "#18191B"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "JetBrains Mono"
+ui = "Inter"
+
+[desktop.appearanceDarkChromeTheme.fonts.codeFace]
+family = "JetBrains Mono"
+fullName = "JetBrains Mono Medium"
+postscriptName = "JetBrainsMono-Medium"
+
+[desktop.appearanceDarkChromeTheme.fonts.uiFace]
+family = "Inter"
+fullName = "Inter Medium"
+postscriptName = "Inter-Medium"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#e02e2a"
+skill = "#751ed9"

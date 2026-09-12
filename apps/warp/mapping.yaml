@@ -1,0 +1,27 @@
+---
+app: warp
+capabilities:
+  colors: true
+  ansiColors: true
+  uiFont: false
+  monospaceFont: user-setting
+fonts:
+  ui:
+    mode: unsupported
+  monospace:
+    mode: user-setting
+    availableFonts:
+      - family: "JetBrains Mono"
+        styles: [regular, medium, bold]
+      - family: "Cascadia Mono"
+        styles: [regular, medium, bold]
+      - family: "Consolas"
+        styles: [regular, bold]
+      - family: "monospace"
+        styles: [regular]
+tokens:
+  light: "{colors.light}"
+  dark: "{colors.dark}"
+  status: "{colors.status}"
+output:
+  package: yaml

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "name": "Google Fonts",
+    "repository": "https://github.com/google/fonts",
+    "revision": "809e4d8b8d7e9364a914909bb777679606c178b8"
+  },
+  "fonts": [
+    {
+      "family": "Inter",
+      "license": "OFL-1.1",
+      "licenseUrl": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/inter/OFL.txt",
+      "files": [
+        {
+          "fileName": "SnowyOwl-Inter-Variable.ttf",
+          "registryName": "Inter Regular (TrueType)",
+          "styles": ["regular", "medium"],
+          "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf",
+          "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+        }
+      ]
+    },
+    {
+      "family": "Noto Sans",
+      "license": "OFL-1.1",
+      "licenseUrl": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/notosans/OFL.txt",
+      "files": [
+        {
+          "fileName": "SnowyOwl-NotoSans-Variable.ttf",
+          "registryName": "Noto Sans Regular (TrueType)",
+          "styles": ["regular", "medium"],
+          "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf",
+          "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d"
+        }
+      ]
+    },
+    {
+      "family": "JetBrains Mono",
+      "license": "OFL-1.1",
+      "licenseUrl": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono/OFL.txt",
+      "files": [
+        {
+          "fileName": "SnowyOwl-JetBrainsMono-Variable.ttf",
+          "registryName": "JetBrains Mono Regular (TrueType)",
+          "styles": ["regular", "medium", "bold"],
+          "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf",
+          "sha256": "48715a42ec242c21e9f02692891e147d022299a52e48d5e413e1a942193ffeda"
+        },
+        {
+          "fileName": "SnowyOwl-JetBrainsMono-Italic-Variable.ttf",
+          "registryName": "JetBrains Mono Italic (TrueType)",
+          "styles": ["italic"],
+          "url": "https://raw.githubusercontent.com/google/fonts/809e4d8b8d7e9364a914909bb777679606c178b8/ofl/jetbrainsmono/JetBrainsMono-Italic%5Bwght%5D.ttf",
+          "sha256": "85ae2a5cd3f56baf1ce1c21a851322c58e3d8fbe8e8ad4a4d090a820dd7fe558"
+        }
+      ]
+    }
+  ]
+}

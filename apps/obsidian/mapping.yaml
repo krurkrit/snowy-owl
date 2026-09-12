@@ -1,0 +1,35 @@
+---
+app: obsidian
+capabilities:
+  lightTheme: true
+  darkTheme: true
+  uiFont: true
+  monospaceFont: true
+  automaticInstall: true
+fonts:
+  ui:
+    mode: runtime-stack
+    availableFonts:
+      - family: "Inter"
+        styles: [regular, medium]
+      - family: "Noto Sans"
+        styles: [regular, medium]
+      - family: "sans-serif"
+        styles: [regular]
+  monospace:
+    mode: runtime-stack
+    availableFonts:
+      - family: "JetBrains Mono"
+        styles: [regular, medium, bold, italic]
+      - family: "Cascadia Mono"
+        styles: [regular, medium, bold, italic]
+      - family: "Consolas"
+        styles: [regular, bold, italic]
+      - family: "monospace"
+        styles: [regular]
+tokens:
+  light: "{colors.light}"
+  dark: "{colors.dark}"
+  typography: "{typography}"
+outputs:
+  - snowy-owl.css

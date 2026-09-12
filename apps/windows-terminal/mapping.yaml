@@ -1,0 +1,28 @@
+---
+app: windows-terminal
+capabilities:
+  lightTheme: true
+  darkTheme: true
+  uiFont: false
+  monospaceFont: true
+  automaticInstall: true
+  nativePackage: false
+fonts:
+  ui:
+    mode: unsupported
+  monospace:
+    mode: configuration
+    requiredProperties: [weight]
+    availableFonts:
+      - family: "JetBrains Mono"
+        styles: [regular, medium, bold]
+      - family: "Cascadia Mono"
+        styles: [regular, medium, bold]
+      - family: "Consolas"
+        styles: [regular, bold]
+tokens:
+  light: "{colors.light}"
+  dark: "{colors.dark}"
+  status: "{colors.status}"
+outputs:
+  - snowy-owl-schemes.json

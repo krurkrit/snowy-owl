@@ -1,0 +1,62 @@
+[desktop]
+appearanceDiffMarkerStyle = "color"
+appearanceLightCodeThemeId = "codex"
+appearanceTheme = "system"
+avatar-overlay-mascot-width-px = 90
+codeFontSize = 14
+sansFontSize = 14
+usePointerCursors = true
+
+[desktop.appearanceLightChromeTheme]
+accent = "{colors.light.accent}"
+accentSource = "chatgpt"
+contrast = 50
+ink = "{colors.light.foreground}"
+opaqueWindows = true
+surface = "{colors.light.background}"
+
+[desktop.appearanceLightChromeTheme.fonts]
+code = "{font.monospace.family}"
+ui = "{font.ui.family}"
+
+[desktop.appearanceLightChromeTheme.fonts.codeFace]
+family = "{font.monospace.family}"
+fullName = "{font.monospace.fullName}"
+postscriptName = "{font.monospace.postScriptName}"
+
+[desktop.appearanceLightChromeTheme.fonts.uiFace]
+family = "{font.ui.family}"
+fullName = "{font.ui.fullName}"
+postscriptName = "{font.ui.postScriptName}"
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "{colors.status.successBackground}"
+diffRemoved = "{colors.status.errorBackground}"
+skill = "#751ed9"
+
+[desktop.appearanceDarkChromeTheme]
+accent = "{colors.dark.accent}"
+accentSource = "chatgpt"
+contrast = 50
+ink = "{colors.dark.foreground}"
+opaqueWindows = true
+surface = "{colors.dark.background}"
+
+[desktop.appearanceDarkChromeTheme.fonts]
+code = "{font.monospace.family}"
+ui = "{font.ui.family}"
+
+[desktop.appearanceDarkChromeTheme.fonts.codeFace]
+family = "{font.monospace.family}"
+fullName = "{font.monospace.fullName}"
+postscriptName = "{font.monospace.postScriptName}"
+
+[desktop.appearanceDarkChromeTheme.fonts.uiFace]
+family = "{font.ui.family}"
+fullName = "{font.ui.fullName}"
+postscriptName = "{font.ui.postScriptName}"
+
+[desktop.appearanceDarkChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#e02e2a"
+skill = "#751ed9"

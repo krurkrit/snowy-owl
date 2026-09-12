@@ -1,0 +1,76 @@
+---
+snowyOwl:
+  name: Typography
+  type: typography
+  hierarchy: 0
+ui:
+  defaultStyle: regular
+  fonts:
+    - family: "Inter"
+      styles:
+        regular:
+          weight: 400
+          slant: normal
+          fullName: "Inter Regular"
+          postScriptName: "Inter-Regular"
+        medium:
+          weight: 500
+          slant: normal
+          fullName: "Inter Medium"
+          postScriptName: "Inter-Medium"
+    - family: "Noto Sans"
+      styles:
+        regular:
+          weight: 400
+          slant: normal
+          fullName: "Noto Sans Regular"
+          postScriptName: "NotoSans-Regular"
+        medium:
+          weight: 500
+          slant: normal
+          fullName: "Noto Sans Medium"
+          postScriptName: "NotoSans-Medium"
+    - family: "sans-serif"
+      styles:
+        regular:
+          weight: 400
+          slant: normal
+monospace:
+  defaultStyle: regular
+  fonts:
+    - family: "JetBrains Mono"
+      styles:
+        regular:
+          weight: 400
+          slant: normal
+          fullName: "JetBrains Mono Regular"
+          postScriptName: "JetBrainsMono-Regular"
+        medium:
+          weight: 500
+          slant: normal
+          fullName: "JetBrains Mono Medium"
+          postScriptName: "JetBrainsMono-Medium"
+        bold:
+          weight: 700
+          slant: normal
+          fullName: "JetBrains Mono Bold"
+          postScriptName: "JetBrainsMono-Bold"
+        italic:
+          weight: 400
+          slant: italic
+          fullName: "JetBrains Mono Italic"
+          postScriptName: "JetBrainsMono-Italic"
+    - family: "Cascadia Mono"
+      styles:
+        regular: { weight: 400, slant: normal }
+        medium: { weight: 500, slant: normal }
+        bold: { weight: 700, slant: normal }
+        italic: { weight: 400, slant: italic }
+    - family: "Consolas"
+      styles:
+        regular: { weight: 400, slant: normal }
+        bold: { weight: 700, slant: normal }
+        italic: { weight: 400, slant: italic }
+    - family: "monospace"
+      styles:
+        regular: { weight: 400, slant: normal }

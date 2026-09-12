@@ -1,0 +1,16 @@
+---
+app: slack
+capabilities:
+  colors: partial-manual
+  uiFont: false
+  monospaceFont: false
+fonts:
+  ui:
+    mode: unsupported
+  monospace:
+    mode: unsupported
+tokens:
+  light: "{colors.light}"
+  status: "{colors.status}"
+output:
+  package: setup-guide

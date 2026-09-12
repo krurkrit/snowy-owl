@@ -1,0 +1,285 @@
+{
+  "codex": {
+    "ui": {
+      "mode": "configuration",
+      "family": "Inter",
+      "fallbackFamilies": [
+        "Noto Sans"
+      ],
+      "style": "medium",
+      "weight": 500,
+      "slant": "normal",
+      "fullName": "Inter Medium",
+      "postScriptName": "Inter-Medium",
+      "candidates": [
+        {
+          "family": "Inter",
+          "style": "medium",
+          "weight": 500,
+          "slant": "normal",
+          "fullName": "Inter Medium",
+          "postScriptName": "Inter-Medium"
+        },
+        {
+          "family": "Noto Sans",
+          "style": "medium",
+          "weight": 500,
+          "slant": "normal",
+          "fullName": "Noto Sans Medium",
+          "postScriptName": "NotoSans-Medium"
+        }
+      ]
+    },
+    "monospace": {
+      "mode": "configuration",
+      "family": "JetBrains Mono",
+      "fallbackFamilies": [],
+      "style": "medium",
+      "weight": 500,
+      "slant": "normal",
+      "fullName": "JetBrains Mono Medium",
+      "postScriptName": "JetBrainsMono-Medium",
+      "candidates": [
+        {
+          "family": "JetBrains Mono",
+          "style": "medium",
+          "weight": 500,
+          "slant": "normal",
+          "fullName": "JetBrains Mono Medium",
+          "postScriptName": "JetBrainsMono-Medium"
+        }
+      ]
+    }
+  },
+  "obsidian": {
+    "ui": {
+      "mode": "runtime-stack",
+      "family": "Inter",
+      "fallbackFamilies": [
+        "Noto Sans",
+        "sans-serif"
+      ],
+      "style": "regular",
+      "weight": 400,
+      "slant": "normal",
+      "fullName": "Inter Regular",
+      "postScriptName": "Inter-Regular",
+      "candidates": [
+        {
+          "family": "Inter",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal",
+          "fullName": "Inter Regular",
+          "postScriptName": "Inter-Regular"
+        },
+        {
+          "family": "Noto Sans",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal",
+          "fullName": "Noto Sans Regular",
+          "postScriptName": "NotoSans-Regular"
+        },
+        {
+          "family": "sans-serif",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        }
+      ]
+    },
+    "monospace": {
+      "mode": "runtime-stack",
+      "family": "JetBrains Mono",
+      "fallbackFamilies": [
+        "Cascadia Mono",
+        "Consolas",
+        "monospace"
+      ],
+      "style": "regular",
+      "weight": 400,
+      "slant": "normal",
+      "fullName": "JetBrains Mono Regular",
+      "postScriptName": "JetBrainsMono-Regular",
+      "candidates": [
+        {
+          "family": "JetBrains Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal",
+          "fullName": "JetBrains Mono Regular",
+          "postScriptName": "JetBrainsMono-Regular"
+        },
+        {
+          "family": "Cascadia Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "Consolas",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "monospace",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        }
+      ]
+    }
+  },
+  "powershell": {
+    "ui": {
+      "mode": "unsupported"
+    },
+    "monospace": {
+      "mode": "unsupported"
+    }
+  },
+  "slack": {
+    "ui": {
+      "mode": "unsupported"
+    },
+    "monospace": {
+      "mode": "unsupported"
+    }
+  },
+  "vscode": {
+    "ui": {
+      "mode": "unsupported"
+    },
+    "monospace": {
+      "mode": "user-setting",
+      "family": "JetBrains Mono",
+      "fallbackFamilies": [
+        "Cascadia Mono",
+        "Consolas",
+        "monospace"
+      ],
+      "style": "regular",
+      "weight": 400,
+      "slant": "normal",
+      "fullName": "JetBrains Mono Regular",
+      "postScriptName": "JetBrainsMono-Regular",
+      "candidates": [
+        {
+          "family": "JetBrains Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal",
+          "fullName": "JetBrains Mono Regular",
+          "postScriptName": "JetBrainsMono-Regular"
+        },
+        {
+          "family": "Cascadia Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "Consolas",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "monospace",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        }
+      ]
+    }
+  },
+  "warp": {
+    "ui": {
+      "mode": "unsupported"
+    },
+    "monospace": {
+      "mode": "user-setting",
+      "family": "JetBrains Mono",
+      "fallbackFamilies": [
+        "Cascadia Mono",
+        "Consolas",
+        "monospace"
+      ],
+      "style": "regular",
+      "weight": 400,
+      "slant": "normal",
+      "fullName": "JetBrains Mono Regular",
+      "postScriptName": "JetBrainsMono-Regular",
+      "candidates": [
+        {
+          "family": "JetBrains Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal",
+          "fullName": "JetBrains Mono Regular",
+          "postScriptName": "JetBrainsMono-Regular"
+        },
+        {
+          "family": "Cascadia Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "Consolas",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "monospace",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        }
+      ]
+    }
+  },
+  "windows-terminal": {
+    "ui": {
+      "mode": "unsupported"
+    },
+    "monospace": {
+      "mode": "configuration",
+      "family": "JetBrains Mono",
+      "fallbackFamilies": [
+        "Cascadia Mono",
+        "Consolas"
+      ],
+      "style": "regular",
+      "weight": 400,
+      "slant": "normal",
+      "fullName": "JetBrains Mono Regular",
+      "postScriptName": "JetBrainsMono-Regular",
+      "candidates": [
+        {
+          "family": "JetBrains Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal",
+          "fullName": "JetBrains Mono Regular",
+          "postScriptName": "JetBrainsMono-Regular"
+        },
+        {
+          "family": "Cascadia Mono",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        },
+        {
+          "family": "Consolas",
+          "style": "regular",
+          "weight": 400,
+          "slant": "normal"
+        }
+      ]
+    }
+  }
+}

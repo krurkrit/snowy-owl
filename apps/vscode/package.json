@@ -1,0 +1,27 @@
+{
+  "name": "snowy-owl",
+  "displayName": "Snowy Owl",
+  "description": "Snowy Owl accessible light and dark color themes.",
+  "version": "0.1.0",
+  "publisher": "snowy-owl-local",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "Snowy Owl Light",
+        "uiTheme": "vs",
+        "path": "./themes/snowy-owl-light-color-theme.json"
+      },
+      {
+        "label": "Snowy Owl Dark",
+        "uiTheme": "vs-dark",
+        "path": "./themes/snowy-owl-dark-color-theme.json"
+      }
+    ]
+  }
+}

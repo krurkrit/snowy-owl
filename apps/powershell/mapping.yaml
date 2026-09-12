@@ -1,0 +1,25 @@
+---
+app: powershell
+capabilities:
+  lightTheme: false
+  darkTheme: false
+  uiFont: false
+  monospaceFont: false
+  tokenColors: true
+  automaticInstall: true
+fonts:
+  ui:
+    mode: unsupported
+  monospace:
+    mode: unsupported
+tokens:
+  command: "{colors.light.link}"
+  keyword: "{colors.light.secondaryAccent}"
+  string: "{colors.status.successBackground}"
+  number: "{colors.light.secondaryAccent}"
+  variable: "{colors.light.link}"
+  parameter: "{colors.light.link}"
+  operator: "{colors.dark.background}"
+  error: "{colors.status.errorBackground}"
+outputs:
+  - snowy-owl.ps1

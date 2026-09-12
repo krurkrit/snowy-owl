@@ -1,0 +1,53 @@
+# dependencies
+node_modules/
+.pnpm-store/
+.vscode-test/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.pyright/
+.tox/
+.nox/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+build/
+
+# local build/cache
+.ruff_cache/
+.cache/
+.tmp/
+tmp/
+temp/
+coverage/
+TestResults/
+*.log
+
+# OS/editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+.vs/
+*.swp
+*.swo
+*~
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# packaged output (created by CI/release)
+dist/*
+!dist/.gitkeep

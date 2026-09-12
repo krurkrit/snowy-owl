@@ -1,0 +1,60 @@
+{
+  "schemes": [
+    {
+      "name": "Snowy Owl Light",
+      "background": "#F8F9FA",
+      "foreground": "#34383C",
+      "cursorColor": "#1450A0",
+      "selectionBackground": "#DCE8F7",
+      "black": "#34383C",
+      "red": "#A52834",
+      "green": "#12633D",
+      "yellow": "#8A3F00",
+      "blue": "#1450A0",
+      "purple": "#704080",
+      "cyan": "#176B72",
+      "white": "#F8F9FA",
+      "brightBlack": "#5B6168",
+      "brightRed": "#A52834",
+      "brightGreen": "#12633D",
+      "brightYellow": "#8A3F00",
+      "brightBlue": "#1450A0",
+      "brightPurple": "#704080",
+      "brightCyan": "#176B72",
+      "brightWhite": "#FFFFFF"
+    },
+    {
+      "name": "Snowy Owl Dark",
+      "background": "#18191B",
+      "foreground": "#F8F9FA",
+      "cursorColor": "#74A8F4",
+      "selectionBackground": "#394452",
+      "black": "#18191B",
+      "red": "#FF8C96",
+      "green": "#78D6A3",
+      "yellow": "#FFB066",
+      "blue": "#74A8F4",
+      "purple": "#D4A7E8",
+      "cyan": "#79D4DB",
+      "white": "#F8F9FA",
+      "brightBlack": "#8A9097",
+      "brightRed": "#FF8C96",
+      "brightGreen": "#78D6A3",
+      "brightYellow": "#FFB066",
+      "brightBlue": "#74A8F4",
+      "brightPurple": "#D4A7E8",
+      "brightCyan": "#79D4DB",
+      "brightWhite": "#FFFFFF"
+    }
+  ],
+  "profileDefaults": {
+    "colorScheme": {
+      "light": "Snowy Owl Light",
+      "dark": "Snowy Owl Dark"
+    },
+    "font": {
+      "face": "JetBrains Mono",
+      "weight": 400
+    }
+  }
+}

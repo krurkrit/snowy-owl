@@ -1,0 +1,51 @@
+---
+name: Release Snowy Owl
+"on":
+  push:
+    tags:
+      - "v*.*.*"
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - run: python3 -m pip install .
+      - name: Verify tag/version
+        run: test "v$(cat VERSION)" = "${GITHUB_REF_NAME}"
+      - name: Build and validate
+        shell: pwsh
+        run: ./scripts/build.ps1 -All
+      - name: Package portable bundle
+        run: |
+          mkdir -p dist/release-root
+          cp -r generated dist/release-root/
+          mkdir -p dist/release-root/apps dist/release-root/scripts dist/release-root/dist
+          find apps -name install.ps1 -exec cp --parents {} dist/release-root/ \;
+          cp scripts/install-common.ps1 scripts/install-fonts.ps1 dist/release-root/scripts/
+          cp -r fonts dist/release-root/
+          cp dist/*.vsix dist/release-root/dist/
+          cp install.ps1 uninstall.ps1 README.md VERSION dist/release-root/
+          (
+            cd dist/release-root || exit 1
+            zip -r "../snowy-owl-portable-${GITHUB_REF_NAME}.zip" .
+          )
+          rm -rf dist/release-root
+          cd dist || exit 1
+          sha256sum ./* > SHA256SUMS.txt
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME" dist/* --generate-notes --title
+          "Snowy Owl $GITHUB_REF_NAME"
+      - name: Publish VS Code Marketplace
+        if: ${{ env.VSCE_PAT != '' }}
+        working-directory: apps/vscode
+        run: npx --yes @vscode/vsce publish --pat "$VSCE_PAT"

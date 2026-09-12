@@ -1,0 +1,51 @@
+---
+snowyOwl:
+  name: Colors
+  type: color
+  hierarchy: 0
+white: "#F8F9FA"
+black: "#34383C"
+darkBlack: "#18191B"
+# base:
+  # lightSecondary: "#F1F3F5"
+  # darkSecondary: "#202225"
+  # mutedText: "#52565B" # Unused by app adapters.
+  # border: "#B7BCC2" # Unused by app adapters.
+  # swatchBorder: "#8A8F95" # Unused by app adapters.
+light:
+  background: "{colors.white}"
+  foreground: "{colors.black}"
+  secondaryBackground: "#F1F3F5"
+  inverseForeground: "{colors.status.lightText}"
+  link: "{colors.blue.light}"
+  accent: "{colors.blue.light}"
+  accentText: "{colors.light.background}"
+  secondaryAccent: "{colors.orange.light}"
+dark:
+  background: "{colors.darkBlack}"
+  foreground: "{colors.white}"
+  secondaryBackground: "#202225"
+  link: "{colors.orange.dark}"
+  accent: "{colors.orange.accent}"
+  accentText: "{colors.orange.accentText}"
+  secondaryAccent: "{colors.orange.dark}"
+blue:
+  light: "#1450A0"
+  dark: "#74A8F4"
+orange:
+  light: "#8A3F00"
+  dark: "#FFB066"
+  accent: "#FD7E14"
+  accentText: "#141517"
+status:
+  error: "#A52834"
+  warning: "#FFC107"
+  success: "#12633D"
+  lightText: "#FFFFFF"
+  darkText: "#18191B"
+  errorBackground: "{colors.status.error}"
+  errorForeground: "{colors.status.lightText}"
+  warningBackground: "{colors.status.warning}"
+  warningForeground: "{colors.status.darkText}"
+  successBackground: "{colors.status.success}"
+  successForeground: "{colors.status.lightText}"

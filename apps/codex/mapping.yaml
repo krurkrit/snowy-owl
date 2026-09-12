@@ -1,0 +1,33 @@
+---
+app: codex
+capabilities:
+  lightTheme: true
+  darkTheme: true
+  uiFont: true
+  monospaceFont: true
+  automaticInstall: true
+  nativePackage: false
+fonts:
+  ui:
+    mode: configuration
+    style: medium
+    requiredProperties: [fullName, postScriptName]
+    availableFonts:
+      - family: "Inter"
+        styles: [medium, regular]
+      - family: "Noto Sans"
+        styles: [medium, regular]
+  monospace:
+    mode: configuration
+    style: medium
+    requiredProperties: [fullName, postScriptName]
+    availableFonts:
+      - family: "JetBrains Mono"
+        styles: [medium, regular]
+tokens:
+  light: "{colors.light}"
+  dark: "{colors.dark}"
+  status: "{colors.status}"
+template: config.template.toml
+outputs:
+  - snowy-owl-desktop.toml

@@ -1,0 +1,22 @@
+/* Snowy Owl — generated personalization snippet */
+.theme-light {
+  --background-primary: #f8f9fa;
+  --background-secondary: #f1f3f5;
+  --text-normal: #34383c;
+  --text-accent: #1450a0;
+  --interactive-accent: #1450a0;
+}
+
+.theme-dark {
+  --background-primary: #18191b;
+  --background-secondary: #202225;
+  --text-normal: #f8f9fa;
+  --text-accent: #74a8f4;
+  --interactive-accent: #74a8f4;
+}
+
+body {
+  --font-interface-theme: "Inter", "Noto Sans", sans-serif;
+  --font-text-theme: "Inter", "Noto Sans", sans-serif;
+  --font-monospace-theme: "JetBrains Mono", monospace;
+}

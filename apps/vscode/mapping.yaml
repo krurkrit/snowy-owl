@@ -1,0 +1,27 @@
+---
+app: vscode
+capabilities:
+  colors: true
+  syntax: true
+  uiFont: false
+  monospaceFont: user-setting
+fonts:
+  ui:
+    mode: unsupported
+  monospace:
+    mode: user-setting
+    availableFonts:
+      - family: "JetBrains Mono"
+        styles: [regular, medium, bold, italic]
+      - family: "Cascadia Mono"
+        styles: [regular, medium, bold, italic]
+      - family: "Consolas"
+        styles: [regular, bold, italic]
+      - family: "monospace"
+        styles: [regular]
+tokens:
+  light: "{colors.light}"
+  dark: "{colors.dark}"
+  status: "{colors.status}"
+output:
+  package: vsix

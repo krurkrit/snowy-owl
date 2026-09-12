@@ -1,0 +1,26 @@
+---
+name: Snowy Owl Light
+accent: "#1450A0"
+cursor: "#FD7E14"
+background: "#F8F9FA"
+foreground: "#34383C"
+details: lighter
+terminal_colors:
+  normal:
+    black: "#34383C"
+    red: "#A52834"
+    green: "#12633D"
+    yellow: "#8A3F00"
+    blue: "#1450A0"
+    magenta: "#8A3F00"
+    cyan: "#1450A0"
+    white: "#F8F9FA"
+  bright:
+    black: "#34383C"
+    red: "#A52834"
+    green: "#12633D"
+    yellow: "#FD7E14"
+    blue: "#1450A0"
+    magenta: "#8A3F00"
+    cyan: "#1450A0"
+    white: "#FFFFFF"

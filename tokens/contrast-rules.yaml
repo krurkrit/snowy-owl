@@ -1,0 +1,38 @@
+---
+snowyOwl:
+  name: Contrast
+  type: contrast-rules
+  hierarchy: 0
+policy:
+  algorithm: "WCAG 2.x relative luminance"
+  minimum: 7.1
+  rounding: "display-only"
+  failBuildBelowMinimum: true
+rules:
+  - name: light-normal-text
+    foreground: "{colors.light.foreground}"
+    background: "{colors.light.background}"
+  - name: light-link
+    foreground: "{colors.light.link}"
+    background: "{colors.light.background}"
+  - name: light-button
+    foreground: "{colors.light.accentText}"
+    background: "{colors.light.accent}"
+  - name: error-box
+    foreground: "{colors.status.errorForeground}"
+    background: "{colors.status.errorBackground}"
+  - name: warning-box
+    foreground: "{colors.status.warningForeground}"
+    background: "{colors.status.warningBackground}"
+  - name: success-box
+    foreground: "{colors.status.successForeground}"
+    background: "{colors.status.successBackground}"
+  - name: dark-normal-text
+    foreground: "{colors.dark.foreground}"
+    background: "{colors.dark.background}"
+  - name: dark-link
+    foreground: "{colors.dark.link}"
+    background: "{colors.dark.background}"
+  - name: dark-button
+    foreground: "{colors.dark.accentText}"
+    background: "{colors.dark.accent}"

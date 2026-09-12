@@ -1,0 +1,26 @@
+---
+name: Snowy Owl Dark
+accent: "#74A8F4"
+cursor: "#FD7E14"
+background: "#18191B"
+foreground: "#F8F9FA"
+details: darker
+terminal_colors:
+  normal:
+    black: "#18191B"
+    red: "#FFB066"
+    green: "#F8F9FA"
+    yellow: "#FFB066"
+    blue: "#74A8F4"
+    magenta: "#FFB066"
+    cyan: "#74A8F4"
+    white: "#F8F9FA"
+  bright:
+    black: "#18191B"
+    red: "#FFB066"
+    green: "#FFFFFF"
+    yellow: "#FFC107"
+    blue: "#74A8F4"
+    magenta: "#FFB066"
+    cyan: "#74A8F4"
+    white: "#FFFFFF"

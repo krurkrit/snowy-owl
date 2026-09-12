@@ -1,0 +1,83 @@
+{
+  "vscode": {
+    "name": "Visual Studio Code",
+    "enabled": true,
+    "package": "vsix",
+    "install": "automatic",
+    "theme": "native",
+    "supportedOperatingSystems": [
+      "windows",
+      "macos",
+      "linux"
+    ]
+  },
+  "warp": {
+    "name": "Warp",
+    "enabled": true,
+    "package": "yaml",
+    "install": "automatic",
+    "theme": "native",
+    "supportedOperatingSystems": [
+      "windows",
+      "macos",
+      "linux"
+    ]
+  },
+  "slack": {
+    "name": "Slack",
+    "enabled": true,
+    "package": "instructions",
+    "install": "guided",
+    "theme": "native-custom-colors",
+    "supportedOperatingSystems": [
+      "windows",
+      "macos",
+      "linux"
+    ]
+  },
+  "codex": {
+    "name": "Codex desktop",
+    "enabled": true,
+    "package": "toml",
+    "install": "automatic",
+    "theme": "desktop-config",
+    "supportedOperatingSystems": [
+      "windows",
+      "macos"
+    ]
+  },
+  "windows-terminal": {
+    "name": "Windows Terminal",
+    "enabled": true,
+    "package": "json",
+    "install": "automatic",
+    "theme": "native",
+    "supportedOperatingSystems": [
+      "windows"
+    ]
+  },
+  "powershell": {
+    "name": "PowerShell",
+    "enabled": true,
+    "package": "ps1",
+    "install": "automatic",
+    "theme": "psreadline",
+    "supportedOperatingSystems": [
+      "windows",
+      "macos",
+      "linux"
+    ]
+  },
+  "obsidian": {
+    "name": "Obsidian",
+    "enabled": true,
+    "package": "css",
+    "install": "automatic",
+    "theme": "css-snippet",
+    "supportedOperatingSystems": [
+      "windows",
+      "macos",
+      "linux"
+    ]
+  }
+}

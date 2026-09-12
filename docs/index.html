@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snowy Owl Token Usage and Accessibility</title>
+  <style>
+    :root { --page-background: #F8F9FA; --page-foreground: #34383C; --surface: #F1F3F5; --primary: #1450A0; --text-secondary: color-mix(in srgb, var(--page-foreground) 76%, transparent); --divider: color-mix(in srgb, var(--page-foreground) 16%, transparent); --action-hover: color-mix(in srgb, var(--page-foreground) 8%, transparent); --action-selected: color-mix(in srgb, var(--primary) 12%, transparent); --card-shadow: hsla(220, 30%, 5%, .07) 0 4px 16px 0, hsla(220, 25%, 10%, .07) 0 8px 16px -5px; color-scheme: light; font-family: "Inter", "Noto Sans", sans-serif; }
+    :root[data-theme="dark"] { --page-background: #18191B; --page-foreground: #F8F9FA; --surface: #202225; --primary: #74A8F4; --text-secondary: color-mix(in srgb, var(--page-foreground) 72%, transparent); --divider: color-mix(in srgb, var(--page-foreground) 24%, transparent); --action-hover: color-mix(in srgb, var(--page-foreground) 10%, transparent); --action-selected: color-mix(in srgb, var(--primary) 14%, transparent); --card-shadow: hsla(220, 30%, 5%, .7) 0 4px 16px 0, hsla(220, 25%, 10%, .8) 0 8px 16px -5px; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--page-background); color: var(--page-foreground); font-size: .875rem; font-weight: 400; line-height: 1.5; transition: background-color .2s, color .2s; }
+    .dashboard { display: grid; grid-template-columns: 15rem minmax(0, 1fr); min-height: 100vh; }
+    .sidebar { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--divider); background: var(--surface); }
+    .sidebar-header { display: flex; align-items: center; gap: .75rem; min-height: 4rem; padding: .75rem 1rem; }
+    .owl-logo { width: 2rem; height: 2rem; color: var(--primary); stroke: currentColor; }
+    .sidebar-title { font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+    .sidebar-divider { border-top: 1px solid var(--divider); }
+    .sidebar nav { display: grid; gap: .125rem; padding: .5rem; }
+    .nav-link { display: flex; align-items: center; gap: .5rem; min-height: 2.5rem; padding: .375rem .5rem; border-radius: .5rem; color: inherit; font-family: inherit; font-size: .875rem; font-weight: 500; line-height: 1.43; text-decoration: none; }
+    .nav-link:hover, .nav-link:focus-visible { background: var(--action-hover); outline: none; }
+    .nav-link[aria-current="page"] { background: var(--action-selected); color: var(--primary); }
+    .nav-icon { width: 1.25rem; height: 1.25rem; margin-right: .25rem; flex: 0 0 auto; }
+    .content-shell { min-width: 0; }
+    .report-content { width: min(106.25rem, calc(100% - 3rem)); margin: 0 auto; padding: 1.5rem 0 3rem; }
+    .page-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 2rem; padding-top: .75rem; }
+    h1 { margin: 0; font-size: 1.5rem; font-weight: 600; line-height: 1.5; }
+    h2 { margin: 0 0 1rem; font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+    h3 { margin: 1.5rem 0 1rem; font-size: 1.125rem; font-weight: 600; line-height: 1.5; }
+    .breadcrumbs { display: flex; gap: .375rem; margin-bottom: .375rem; color: var(--text-secondary); font-size: .75rem; font-weight: 400; line-height: 1.5; }
+    .breadcrumbs strong { color: var(--page-foreground); font-weight: 500; }
+    .report-section { scroll-margin-top: 1.5rem; margin-bottom: 3rem; }
+    .color-overview { margin-bottom: 1rem; }
+    .color-summary { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; color: var(--text-secondary); }
+    .color-summary strong { color: var(--page-foreground); font-weight: 600; }
+    .status-popover { position: relative; display: grid; width: 2rem; height: 2rem; place-items: center; margin-left: -.75rem; border-radius: 50%; color: var(--text-secondary); }
+    .status-popover:hover, .status-popover:focus-visible { background: var(--action-hover); color: var(--page-foreground); outline: none; }
+    .status-popover svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    .status-tooltip { position: absolute; z-index: 10; top: calc(100% + .5rem); right: 0; width: 19rem; padding: 1rem; border: 1px solid var(--divider); border-radius: .5rem; background: var(--surface); box-shadow: var(--card-shadow); color: var(--page-foreground); visibility: hidden; opacity: 0; pointer-events: auto; transform: translateY(-.25rem); transition: opacity .15s ease, transform .15s ease; }
+    .status-popover:hover .status-tooltip, .status-popover:focus .status-tooltip, .status-popover:focus-within .status-tooltip, .status-popover.popover-open .status-tooltip { visibility: visible; opacity: 1; transform: translateY(0); }
+    .status-tooltip p { margin: 0 0 .5rem; }
+    .status-tooltip p:last-child { margin-bottom: 0; }
+    .status-tooltip b { font-weight: 600; }
+    .status-definition { display: grid; grid-template-columns: 7.5rem 1fr; gap: .75rem; align-items: start; margin-top: .5rem; }
+    .status-definition .status { min-width: 0; }
+    button { display: grid; width: 2.75rem; height: 2.75rem; place-items: center; padding: .5rem; border: 0; border-radius: 50%; background: transparent; color: var(--primary); cursor: pointer; transition: background-color .15s, box-shadow .15s; }
+    button:hover, button:focus-visible { background: var(--action-hover); outline: 2px solid var(--primary); outline-offset: 2px; }
+    .theme-icon { width: 1.25rem; height: 1.25rem; stroke: currentColor; }
+    .icon-sun { display: none; }
+    :root[data-theme="dark"] .icon-sun { display: block; }
+    :root[data-theme="dark"] .icon-moon { display: none; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+    .summary { display: flex; align-items: center; gap: .75rem; margin-bottom: 1.5rem; }
+    .wcag-popover { position: relative; border-radius: 999px; }
+    .wcag-trigger { display: inline-block; padding: .25rem .625rem; border-radius: 999px; background: var(--action-selected); color: var(--primary); font-size: .8125rem; font-weight: 500; line-height: 1.5; }
+    .wcag-popover:hover .wcag-trigger, .wcag-popover:focus-visible .wcag-trigger { outline: 2px solid var(--primary); outline-offset: 2px; }
+    .wcag-tooltip { position: absolute; z-index: 10; top: calc(100% + .5rem); left: 0; width: min(32rem, calc(100vw - 3rem)); padding: 1rem; border: 1px solid var(--divider); border-radius: .5rem; background: var(--surface); box-shadow: var(--card-shadow); visibility: hidden; opacity: 0; pointer-events: auto; transform: translateY(-.25rem); transition: opacity .15s ease, transform .15s ease; }
+    .wcag-popover:hover .wcag-tooltip, .wcag-popover:focus .wcag-tooltip, .wcag-popover:focus-within .wcag-tooltip, .wcag-popover.popover-open .wcag-tooltip { visibility: visible; opacity: 1; transform: translateY(0); }
+    .wcag-tooltip p { margin-top: 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: .625rem .75rem; border-bottom: 1px solid var(--divider); text-align: left; }
+    th { font-weight: 600; }
+    .pairs { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; }
+    .pair { overflow: hidden; border: 1px solid var(--divider); border-radius: .5rem; background: var(--surface); box-shadow: var(--card-shadow); }
+    .sample { padding: 2rem 1rem; font-size: 1.125rem; font-weight: 600; text-align: center; }
+    dl { margin: 0; padding: .75rem 1rem; }
+    dl div { display: flex; justify-content: space-between; gap: 1rem; padding: .125rem 0; }
+    dt { color: var(--text-secondary); font-size: .75rem; font-weight: 400; line-height: 1.5; }
+    code, dd { font-family: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace; }
+    dd { margin: 0; }
+    .pass dd:last-child { color: #12633D; font-weight: 500; }
+    .fail dd:last-child { color: #A52834; font-weight: 500; }
+    .report-section > p, .font-card > p:last-child { color: var(--text-secondary); }
+    .debug-banner { margin: 0 0 1rem; padding: .75rem 1rem; border: 1px solid #FFC107; border-radius: .5rem; background: color-mix(in srgb, #FFC107 14%, transparent); color: var(--page-foreground); }
+    .tokens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+    .token { display: grid; grid-template-columns: 7.25rem 1fr; gap: .75rem 1rem; align-items: start; align-content: start; padding: 1rem; border: 1px solid var(--divider); border-radius: .5rem; background: var(--surface); box-shadow: var(--card-shadow); scroll-margin-top: 1.5rem; transition: background-color .15s ease, border-color .15s ease; }
+    .token:hover { background: var(--action-hover); }
+    .token:target { border-color: var(--primary); outline: 2px solid color-mix(in srgb, var(--primary) 28%, transparent); }
+    .token-preview { display: grid; grid-row: 1 / 4; justify-items: center; gap: .375rem; text-align: center; }
+    .swatch { width: 4rem; height: 3rem; border: 1px solid var(--divider); border-radius: .5rem; }
+    .text-sample { font-size: .875rem; font-weight: 400; line-height: 1.5; }
+    .color-value { font-size: .875rem; }
+    .app-only-label { padding: .125rem .5rem; border: 1px solid var(--primary); border-radius: 999px; color: var(--primary); font-size: .75rem; font-weight: 500; }
+    .color-values { display: grid; gap: .125rem; }
+    .original-value { color: var(--text-secondary); text-decoration: line-through; }
+    .override-value { color: var(--page-foreground); }
+    .color-reference { position: relative; display: inline-block; color: var(--primary); text-decoration: none; }
+    .color-reference:hover { text-decoration: underline; }
+    .overridden-color { position: relative; display: inline-block; }
+    .app-overridden-color .override-tooltip { display: none; }
+    .app-floating-tooltip { position: fixed; z-index: 100; width: max-content; max-width: 18rem; padding: .375rem .5rem; border-radius: .375rem; background: var(--page-foreground); color: var(--page-background); font-size: .75rem; font-weight: 400; line-height: 1.4; pointer-events: none; }
+    .override-tooltip, .value-tooltip { position: absolute; z-index: 30; bottom: calc(100% + .5rem); left: 50%; width: max-content; max-width: 18rem; padding: .375rem .5rem; border-radius: .375rem; background: var(--page-foreground); color: var(--page-background); font-size: .75rem; font-weight: 400; line-height: 1.4; text-decoration: none; opacity: 0; pointer-events: none; transform: translate(-50%, .25rem); transition: opacity .15s ease, transform .15s ease; }
+    .overridden-color:hover .override-tooltip, .overridden-color:focus .override-tooltip, .overridden-color:focus-within .override-tooltip, .color-reference:hover .value-tooltip, .color-reference:focus .value-tooltip { opacity: 1; transform: translate(-50%, 0); }
+    .variable-name { font-size: .875rem; font-weight: 500; line-height: 1.5; }
+    .usage-list a { color: var(--primary); text-decoration: none; }
+    .usage-list a:hover { text-decoration: underline; }
+    .token code { overflow-wrap: anywhere; }
+    .usage-breakdown { display: grid; grid-template-columns: 1fr; gap: .5rem; font-size: .875rem; }
+    .usage-breakdown div { min-width: 0; padding: .625rem; border: 1px solid var(--divider); border-radius: .5rem; background: var(--page-background); }
+    .usage-breakdown strong { display: block; font-size: .75rem; font-weight: 400; line-height: 1.5; color: var(--text-secondary); }
+    .usage-list { margin: .25rem 0 0; padding: 0; overflow-y: auto; list-style: none; scrollbar-gutter: stable; }
+    .variable-usage .usage-list { height: 3.75rem; }
+    .app-usage .usage-list { height: 7.25rem; }
+    .usage-list li { padding: .125rem 0; overflow-wrap: anywhere; }
+    .app-usage li, .variable-usage li { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 1.75rem; padding: .125rem 0; }
+    .historical-use a { color: var(--text-secondary); text-decoration: line-through; }
+    .app-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .app-override { display: inline-flex; flex: 0 0 auto; align-items: center; gap: .375rem; }
+    .app-override-value { font-size: .75rem; }
+    .app-override-value.active-override { padding: .0625rem .375rem; border: 1px solid var(--primary); border-radius: 999px; color: var(--primary); background: color-mix(in srgb, var(--primary) 12%, transparent); }
+    .app-override-value.superseded { color: var(--text-secondary); text-decoration: line-through; }
+    .usage-kind { flex: 0 0 auto; min-width: 3.75rem; padding: .0625rem .375rem; border: 1px solid var(--divider); border-radius: 999px; color: var(--text-secondary); background: var(--action-hover); font-size: .6875rem; font-weight: 500; line-height: 1.5; text-align: center; }
+    .direct-use .usage-kind { border-color: #12633D; color: #12633D; background: color-mix(in srgb, #12633D 12%, transparent); }
+    .historical-use .usage-kind { border-color: var(--primary); color: var(--primary); background: var(--action-selected); }
+    :root[data-theme="dark"] .direct-use .usage-kind { color: var(--page-foreground); }
+    :root[data-theme="dark"] .app-override-value.active-override { color: var(--page-foreground); }
+    .fonts { display: grid; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); gap: 1rem; }
+    .font-card { padding: 1rem; border: 1px solid var(--divider); border-radius: .5rem; background: var(--surface); box-shadow: var(--card-shadow); }
+    .font-card h3, .font-card p { margin: 0 0 .75rem; }
+    .font-sample { font-size: 1.125rem; }
+    .status { display: inline-block; min-width: 6.5rem; padding: .125rem .5rem; border: 1px solid currentColor; border-radius: 999px; font-size: .8125rem; font-weight: 500; line-height: 1.5; text-align: center; }
+    .status.used { color: #12633D; background: color-mix(in srgb, #12633D 12%, transparent); }
+    .status.referenced { color: #8A3F00; background: color-mix(in srgb, #FFC107 16%, transparent); }
+    .status.historical { color: var(--primary); background: var(--action-selected); }
+    .status.unused { color: #A52834; background: color-mix(in srgb, #A52834 12%, transparent); }
+    :root[data-theme="dark"] .status.used, :root[data-theme="dark"] .status.referenced, :root[data-theme="dark"] .status.historical, :root[data-theme="dark"] .status.unused, :root[data-theme="dark"] .historical-use .usage-kind { color: var(--page-foreground); }
+    @media (max-width: 52rem) { .dashboard { grid-template-columns: 1fr; } .sidebar { position: sticky; z-index: 20; height: auto; border-right: 0; border-bottom: 1px solid var(--divider); } .sidebar-header, .sidebar-divider { display: none; } .sidebar nav { display: flex; overflow-x: auto; } .nav-link { flex: 0 0 auto; } .report-content { width: min(100% - 2rem, 72rem); padding-top: 1rem; } }
+    @media (max-width: 44rem) { .tokens { grid-template-columns: 1fr; } .token { grid-template-columns: 6.75rem 1fr; } .wcag-tooltip { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); } }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <svg class="owl-logo" viewBox="0 0 32 32" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10 4 5l7 3a12 12 0 0 1 10 0l7-3-3 5a12 12 0 1 1-18 0Z"/><circle cx="11" cy="15" r="2.5"/><circle cx="21" cy="15" r="2.5"/><path d="m14 20 2 2 2-2"/></svg>
+        <span class="sidebar-title">Dashboard</span>
+      </div>
+      <div class="sidebar-divider"></div>
+      <nav aria-label="Report sections">
+      <a class="nav-link" href="#colors" aria-current="page"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16Z"/></svg>Colors</a>
+      <a class="nav-link" href="#contrast"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V9m6 10V5m6 14v-7m4 7V3"/></svg>Contrast</a>
+      <a class="nav-link" href="#typography"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6V4h14v2M12 4v16m-4 0h8"/></svg>Typography</a>
+      </nav>
+    </aside>
+    <div class="content-shell">
+      <main class="report-content">
+        <header class="page-header">
+          <div><div class="breadcrumbs"><span>Dashboard</span><span>/</span><strong>Tokens</strong></div><h1>Token dashboard</h1></div>
+          <button id="theme-toggle" type="button" aria-pressed="false" aria-label="Use dark background" title="Use dark background">
+            <svg class="theme-icon icon-moon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+            <svg class="theme-icon icon-sun" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>
+            <span class="visually-hidden">Use dark background</span>
+          </button>
+        </header>
+
+    <section class="report-section" id="colors">
+      <h2>Colors</h2>
+      <div class="color-overview">
+        <div class="color-summary" aria-label="Color variable status summary">
+          <span><strong>35</strong> variables</span>
+          <span><strong>33</strong> used</span>
+          <span><strong>0</strong> referenced</span>
+          <span><strong>0</strong> historical</span>
+          <span><strong>2</strong> unused</span>
+          <div class="status-popover" tabindex="0" aria-describedby="status-tooltip" aria-label="Color status definitions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>
+            <div class="status-tooltip" id="status-tooltip" role="tooltip">
+            <p><strong>Color status</strong></p>
+            <div class="status-definition"><span class="status used">Used</span><span>Reaches an app.</span></div>
+            <div class="status-definition"><span class="status referenced">Referenced</span><span>Used by other active variables.</span></div>
+            <div class="status-definition"><span class="status historical">Historical</span><span>Referenced only by overridden values.</span></div>
+            <div class="status-definition"><span class="status unused">Unused</span><span>Has no references.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>Colors</h3>
+      <div class="tokens" aria-label="Colors">
+      <article class="token" id="token-colors-white">
+        <div class="token-preview">
+          <div class="swatch" style="background: #F8F9FA" aria-label="Color #F8F9FA"></div>
+          <div class="text-sample" style="color: #F8F9FA">owl</div>
+          <code class="color-value">#F8F9FA</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.white</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-dark-foreground">colors.dark.foreground</a></li><li><a href="#token-colors-light-background">colors.light.background</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-black">
+        <div class="token-preview">
+          <div class="swatch" style="background: #34383C" aria-label="Color #34383C"></div>
+          <div class="text-sample" style="color: #34383C">owl</div>
+          <code class="color-value">#34383C</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.black</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-light-foreground">colors.light.foreground</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-darkblack">
+        <div class="token-preview">
+          <div class="swatch" style="background: #18191B" aria-label="Color #18191B"></div>
+          <div class="text-sample" style="color: #18191B">owl</div>
+          <code class="color-value">#18191B</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.darkBlack</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-dark-background">colors.dark.background</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-background">
+        <div class="token-preview">
+          <div class="swatch" style="background: #F8F9FA" aria-label="Color #F8F9FA"></div>
+          <div class="text-sample" style="color: #F8F9FA">owl</div>
+          <a class="color-reference" href="#token-colors-white" aria-label="Value from colors.white"><code class="color-value">#F8F9FA</code><span class="value-tooltip" role="tooltip">Value from colors.white</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.background</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-light-accenttext">colors.light.accentText</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-foreground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #34383C" aria-label="Color #34383C"></div>
+          <div class="text-sample" style="color: #34383C">owl</div>
+          <a class="color-reference" href="#token-colors-black" aria-label="Value from colors.black"><code class="color-value">#34383C</code><span class="value-tooltip" role="tooltip">Value from colors.black</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.foreground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-secondarybackground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #F1F3F5" aria-label="Color #F1F3F5"></div>
+          <div class="text-sample" style="color: #F1F3F5">owl</div>
+          <code class="color-value">#F1F3F5</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.secondaryBackground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-inverseforeground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFFFFF" aria-label="Color #FFFFFF"></div>
+          <div class="text-sample" style="color: #FFFFFF">owl</div>
+          <a class="color-reference" href="#token-colors-status-lighttext" aria-label="Value from colors.status.lightText"><code class="color-value">#FFFFFF</code><span class="value-tooltip" role="tooltip">Value from colors.status.lightText</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.inverseForeground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-link">
+        <div class="token-preview">
+          <div class="swatch" style="background: #1450A0" aria-label="Color #1450A0"></div>
+          <div class="text-sample" style="color: #1450A0">owl</div>
+          <a class="color-reference" href="#token-colors-blue-light" aria-label="Value from colors.blue.light"><code class="color-value">#1450A0</code><span class="value-tooltip" role="tooltip">Value from colors.blue.light</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.link</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="direct-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-secondaryaccent">
+        <div class="token-preview">
+          <div class="swatch" style="background: #8A3F00" aria-label="Color #8A3F00"></div>
+          <div class="text-sample" style="color: #8A3F00">owl</div>
+          <a class="color-reference" href="#token-colors-orange-light" aria-label="Value from colors.orange.light"><code class="color-value">#8A3F00</code><span class="value-tooltip" role="tooltip">Value from colors.orange.light</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.secondaryAccent</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="direct-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-accent">
+        <div class="token-preview">
+          <div class="swatch" style="background: #1450A0" aria-label="Color #1450A0"></div>
+          <div class="text-sample" style="color: #1450A0">owl</div>
+          <a class="color-reference" href="#token-colors-blue-light" aria-label="Value from colors.blue.light"><code class="color-value">#1450A0</code><span class="value-tooltip" role="tooltip">Value from colors.blue.light</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.accent</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-light-accenttext">
+        <div class="token-preview">
+          <div class="swatch" style="background: #F8F9FA" aria-label="Color #F8F9FA"></div>
+          <div class="text-sample" style="color: #F8F9FA">owl</div>
+          <a class="color-reference" href="#token-colors-light-background" aria-label="Value from colors.light.background"><code class="color-value">#F8F9FA</code><span class="value-tooltip" role="tooltip">Value from colors.light.background</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.light.accentText</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-background">
+        <div class="token-preview">
+          <div class="swatch" style="background: #18191B" aria-label="Color #18191B"></div>
+          <div class="text-sample" style="color: #18191B">owl</div>
+          <a class="color-reference" href="#token-colors-darkblack" aria-label="Value from colors.darkBlack"><code class="color-value">#18191B</code><span class="value-tooltip" role="tooltip">Value from colors.darkBlack</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.background</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-dark-accenttext">colors.dark.accentText</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="direct-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-foreground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #F8F9FA" aria-label="Color #F8F9FA"></div>
+          <div class="text-sample" style="color: #F8F9FA">owl</div>
+          <a class="color-reference" href="#token-colors-white" aria-label="Value from colors.white"><code class="color-value">#F8F9FA</code><span class="value-tooltip" role="tooltip">Value from colors.white</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.foreground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-secondarybackground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #202225" aria-label="Color #202225"></div>
+          <div class="text-sample" style="color: #202225">owl</div>
+          <code class="color-value">#202225</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.secondaryBackground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-link">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFB066" aria-label="Color #FFB066"></div>
+          <div class="text-sample" style="color: #FFB066">owl</div>
+          <a class="color-reference" href="#token-colors-orange-dark" aria-label="Value from colors.orange.dark"><code class="color-value">#FFB066</code><span class="value-tooltip" role="tooltip">Value from colors.orange.dark</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.link</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-secondaryaccent">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFB066" aria-label="Color #FFB066"></div>
+          <div class="text-sample" style="color: #FFB066">owl</div>
+          <a class="color-reference" href="#token-colors-orange-dark" aria-label="Value from colors.orange.dark"><code class="color-value">#FFB066</code><span class="value-tooltip" role="tooltip">Value from colors.orange.dark</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.secondaryAccent</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-accent">
+        <div class="token-preview">
+          <div class="swatch" style="background: #74A8F4" aria-label="Color #74A8F4"></div>
+          <div class="text-sample" style="color: #74A8F4">owl</div>
+          <a class="color-reference" href="#token-colors-blue-dark" aria-label="Value from colors.blue.dark"><code class="color-value">#74A8F4</code><span class="value-tooltip" role="tooltip">Value from colors.blue.dark</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.accent</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-dark-accenttext">
+        <div class="token-preview">
+          <div class="swatch" style="background: #18191B" aria-label="Color #18191B"></div>
+          <div class="text-sample" style="color: #18191B">owl</div>
+          <a class="color-reference" href="#token-colors-dark-background" aria-label="Value from colors.dark.background"><code class="color-value">#18191B</code><span class="value-tooltip" role="tooltip">Value from colors.dark.background</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.dark.accentText</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-blue-light">
+        <div class="token-preview">
+          <div class="swatch" style="background: #1450A0" aria-label="Color #1450A0"></div>
+          <div class="text-sample" style="color: #1450A0">owl</div>
+          <code class="color-value">#1450A0</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.blue.light</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-light-accent">colors.light.accent</a></li><li><a href="#token-colors-light-link">colors.light.link</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-blue-dark">
+        <div class="token-preview">
+          <div class="swatch" style="background: #74A8F4" aria-label="Color #74A8F4"></div>
+          <div class="text-sample" style="color: #74A8F4">owl</div>
+          <code class="color-value">#74A8F4</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.blue.dark</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-dark-accent">colors.dark.accent</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-orange-light">
+        <div class="token-preview">
+          <div class="swatch" style="background: #8A3F00" aria-label="Color #8A3F00"></div>
+          <div class="text-sample" style="color: #8A3F00">owl</div>
+          <code class="color-value">#8A3F00</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.orange.light</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-light-secondaryaccent">colors.light.secondaryAccent</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-orange-dark">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFB066" aria-label="Color #FFB066"></div>
+          <div class="text-sample" style="color: #FFB066">owl</div>
+          <code class="color-value">#FFB066</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.orange.dark</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-dark-link">colors.dark.link</a></li><li><a href="#token-colors-dark-secondaryaccent">colors.dark.secondaryAccent</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-orange-accent">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FD7E14" aria-label="Color #FD7E14"></div>
+          <div class="text-sample" style="color: #FD7E14">owl</div>
+          <code class="color-value">#FD7E14</code>
+          <span class="status unused">Unused</span>
+        </div>
+        <code class="variable-name">colors.orange.accent</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-orange-accenttext">
+        <div class="token-preview">
+          <div class="swatch" style="background: #141517" aria-label="Color #141517"></div>
+          <div class="text-sample" style="color: #141517">owl</div>
+          <code class="color-value">#141517</code>
+          <span class="status unused">Unused</span>
+        </div>
+        <code class="variable-name">colors.orange.accentText</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-error">
+        <div class="token-preview">
+          <div class="swatch" style="background: #A52834" aria-label="Color #A52834"></div>
+          <div class="text-sample" style="color: #A52834">owl</div>
+          <code class="color-value">#A52834</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.error</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-status-errorbackground">colors.status.errorBackground</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-warning">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFC107" aria-label="Color #FFC107"></div>
+          <div class="text-sample" style="color: #FFC107">owl</div>
+          <code class="color-value">#FFC107</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.warning</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-status-warningbackground">colors.status.warningBackground</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-success">
+        <div class="token-preview">
+          <div class="swatch" style="background: #12633D" aria-label="Color #12633D"></div>
+          <div class="text-sample" style="color: #12633D">owl</div>
+          <code class="color-value">#12633D</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.success</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-status-successbackground">colors.status.successBackground</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-lighttext">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFFFFF" aria-label="Color #FFFFFF"></div>
+          <div class="text-sample" style="color: #FFFFFF">owl</div>
+          <code class="color-value">#FFFFFF</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.lightText</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-light-inverseforeground">colors.light.inverseForeground</a></li><li><a href="#token-colors-status-errorforeground">colors.status.errorForeground</a></li><li><a href="#token-colors-status-successforeground">colors.status.successForeground</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">obsidian/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-darktext">
+        <div class="token-preview">
+          <div class="swatch" style="background: #18191B" aria-label="Color #18191B"></div>
+          <div class="text-sample" style="color: #18191B">owl</div>
+          <code class="color-value">#18191B</code>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.darkText</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"><li><a href="#token-colors-status-warningforeground">colors.status.warningForeground</a></li></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-errorbackground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #A52834" aria-label="Color #A52834"></div>
+          <div class="text-sample" style="color: #A52834">owl</div>
+          <a class="color-reference" href="#token-colors-status-error" aria-label="Value from colors.status.error"><code class="color-value">#A52834</code><span class="value-tooltip" role="tooltip">Value from colors.status.error</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.errorBackground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="direct-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-errorforeground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFFFFF" aria-label="Color #FFFFFF"></div>
+          <div class="text-sample" style="color: #FFFFFF">owl</div>
+          <a class="color-reference" href="#token-colors-status-lighttext" aria-label="Value from colors.status.lightText"><code class="color-value">#FFFFFF</code><span class="value-tooltip" role="tooltip">Value from colors.status.lightText</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.errorForeground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-warningbackground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFC107" aria-label="Color #FFC107"></div>
+          <div class="text-sample" style="color: #FFC107">owl</div>
+          <a class="color-reference" href="#token-colors-status-warning" aria-label="Value from colors.status.warning"><code class="color-value">#FFC107</code><span class="value-tooltip" role="tooltip">Value from colors.status.warning</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.warningBackground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-warningforeground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #18191B" aria-label="Color #18191B"></div>
+          <div class="text-sample" style="color: #18191B">owl</div>
+          <a class="color-reference" href="#token-colors-status-darktext" aria-label="Value from colors.status.darkText"><code class="color-value">#18191B</code><span class="value-tooltip" role="tooltip">Value from colors.status.darkText</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.warningForeground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-successbackground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #12633D" aria-label="Color #12633D"></div>
+          <div class="text-sample" style="color: #12633D">owl</div>
+          <a class="color-reference" href="#token-colors-status-success" aria-label="Value from colors.status.success"><code class="color-value">#12633D</code><span class="value-tooltip" role="tooltip">Value from colors.status.success</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.successBackground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="direct-use"><span class="app-name">codex/config.template.toml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="direct-use"><span class="app-name">powershell/mapping.yaml</span><span class="usage-kind">Direct</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      <article class="token" id="token-colors-status-successforeground">
+        <div class="token-preview">
+          <div class="swatch" style="background: #FFFFFF" aria-label="Color #FFFFFF"></div>
+          <div class="text-sample" style="color: #FFFFFF">owl</div>
+          <a class="color-reference" href="#token-colors-status-lighttext" aria-label="Value from colors.status.lightText"><code class="color-value">#FFFFFF</code><span class="value-tooltip" role="tooltip">Value from colors.status.lightText</span></a>
+          <span class="status used">Used</span>
+        </div>
+        <code class="variable-name">colors.status.successForeground</code>
+        <div class="usage-breakdown">
+          <div class="usage-row variable-usage"><strong>Variables</strong><ul class="usage-list"></ul></div>
+          <div class="usage-row app-usage"><strong>Apps</strong><ul class="usage-list"><li class="indirect-use"><span class="app-name">codex/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">slack/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">vscode/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">warp/mapping.yaml</span><span class="usage-kind">Indirect</span></li><li class="indirect-use"><span class="app-name">windows-terminal/mapping.yaml</span><span class="usage-kind">Indirect</span></li></ul></div>
+        </div>
+      </article>
+      </div>
+    </section>
+    <section class="report-section" id="contrast">
+      <h2>Contrast</h2>
+      <div class="summary">
+        <span>Project minimum: <strong>7.1:1</strong></span>
+        <div class="wcag-popover" tabindex="0" aria-describedby="wcag-tooltip">
+          <span class="wcag-trigger">WCAG</span>
+          <div class="wcag-tooltip" id="wcag-tooltip" role="tooltip">
+            <p><strong>Contrast standards</strong></p>
+            <table aria-label="WCAG contrast thresholds">
+              <thead><tr><th>Target</th><th>Minimum</th></tr></thead>
+              <tbody>
+                <tr><td>AA normal text</td><td>4.5:1</td></tr>
+                <tr><td>AA large text</td><td>3:1</td></tr>
+                <tr><td>AAA normal text</td><td>7:1</td></tr>
+                <tr><td>AAA large text</td><td>4.5:1</td></tr>
+                <tr><td>Snowy Owl required pairs</td><td>7.1:1</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <h3>Required pairs</h3>
+      <div class="pairs" aria-label="Required contrast pairs">
+      <article class="pair pass">
+        <div class="sample" style="color: #34383C; background: #F8F9FA">light-normal-text</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#34383C</dd></div>
+          <div><dt>Background</dt><dd>#F8F9FA</dd></div>
+          <div><dt>Ratio</dt><dd>11.2115:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #1450A0; background: #F8F9FA">light-link</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#1450A0</dd></div>
+          <div><dt>Background</dt><dd>#F8F9FA</dd></div>
+          <div><dt>Ratio</dt><dd>7.4202:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #F8F9FA; background: #1450A0">light-button</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#F8F9FA</dd></div>
+          <div><dt>Background</dt><dd>#1450A0</dd></div>
+          <div><dt>Ratio</dt><dd>7.4202:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #FFFFFF; background: #A52834">error-box</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#FFFFFF</dd></div>
+          <div><dt>Background</dt><dd>#A52834</dd></div>
+          <div><dt>Ratio</dt><dd>7.1115:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #18191B; background: #FFC107">warning-box</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#18191B</dd></div>
+          <div><dt>Background</dt><dd>#FFC107</dd></div>
+          <div><dt>Ratio</dt><dd>10.7924:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #FFFFFF; background: #12633D">success-box</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#FFFFFF</dd></div>
+          <div><dt>Background</dt><dd>#12633D</dd></div>
+          <div><dt>Ratio</dt><dd>7.2971:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #F8F9FA; background: #18191B">dark-normal-text</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#F8F9FA</dd></div>
+          <div><dt>Background</dt><dd>#18191B</dd></div>
+          <div><dt>Ratio</dt><dd>16.6890:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #FFB066; background: #18191B">dark-link</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#FFB066</dd></div>
+          <div><dt>Background</dt><dd>#18191B</dd></div>
+          <div><dt>Ratio</dt><dd>9.7628:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      <article class="pair pass">
+        <div class="sample" style="color: #18191B; background: #74A8F4">dark-button</div>
+        <dl>
+          <div><dt>Foreground</dt><dd>#18191B</dd></div>
+          <div><dt>Background</dt><dd>#74A8F4</dd></div>
+          <div><dt>Ratio</dt><dd>7.2463:1</dd></div>
+          <div><dt>Result</dt><dd>PASS</dd></div>
+        </dl>
+      </article>
+      </div>
+    </section>
+    <section class="report-section" id="typography">
+      <h2>Typography</h2>
+      <div class="fonts" aria-label="Typography">
+      <article class="font-card">
+        <h3>Ui</h3>
+        <p class="font-sample" style="font-family: &quot;Inter&quot;, &quot;Noto Sans&quot;, sans-serif">Aa Bb Cc 0123 — Snowy Owl</p>
+        <p>Primary: Inter; PostScript: Inter-Regular; Style: regular; Fallback: Noto Sans, sans-serif</p>
+      </article>
+      <article class="font-card">
+        <h3>Monospace</h3>
+        <p class="font-sample" style="font-family: &quot;JetBrains Mono&quot;, &quot;Cascadia Mono&quot;, &quot;Consolas&quot;, monospace">Aa Bb Cc 0123 — Snowy Owl</p>
+        <p>Primary: JetBrains Mono; PostScript: JetBrainsMono-Regular; Style: regular; Fallback: Cascadia Mono, Consolas, monospace</p>
+      </article>
+      </div>
+    </section>
+      </main>
+    </div>
+  </div>
+  <script>
+    const root = document.documentElement;
+    const themeToggle = document.getElementById("theme-toggle");
+    function setTheme(theme) {
+      root.dataset.theme = theme;
+      const dark = theme === "dark";
+      const label = dark ? "Use light background" : "Use dark background";
+      themeToggle.setAttribute("aria-pressed", String(dark));
+      themeToggle.setAttribute("aria-label", label);
+      themeToggle.setAttribute("title", label);
+      themeToggle.querySelector(".visually-hidden").textContent = label;
+    }
+    setTheme(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    themeToggle.addEventListener("click", () => {
+      setTheme(root.dataset.theme === "dark" ? "light" : "dark");
+    });
+    document.querySelectorAll(".nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        document.querySelectorAll(".nav-link").forEach((item) => item.removeAttribute("aria-current"));
+        link.setAttribute("aria-current", "page");
+      });
+    });
+    const appTooltip = document.createElement("div");
+    appTooltip.className = "app-floating-tooltip";
+    appTooltip.setAttribute("role", "tooltip");
+    appTooltip.hidden = true;
+    document.body.append(appTooltip);
+    function hideAppTooltip() { appTooltip.hidden = true; }
+    function showAppTooltip(trigger) {
+      const source = trigger.querySelector(".override-tooltip");
+      if (!source) return;
+      appTooltip.innerHTML = source.innerHTML;
+      appTooltip.hidden = false;
+      const rect = trigger.getBoundingClientRect();
+      const margin = 8;
+      const left = Math.max(margin, Math.min(rect.right - appTooltip.offsetWidth, window.innerWidth - appTooltip.offsetWidth - margin));
+      const top = Math.min(rect.bottom + margin, window.innerHeight - appTooltip.offsetHeight - margin);
+      appTooltip.style.left = `${left}px`;
+      appTooltip.style.top = `${top}px`;
+    }
+    document.querySelectorAll(".app-overridden-color").forEach((trigger) => {
+      trigger.addEventListener("mouseenter", () => showAppTooltip(trigger));
+      trigger.addEventListener("mouseleave", hideAppTooltip);
+      trigger.addEventListener("focusin", () => showAppTooltip(trigger));
+      trigger.addEventListener("focusout", hideAppTooltip);
+    });
+    window.addEventListener("scroll", hideAppTooltip, true);
+    window.addEventListener("resize", hideAppTooltip);
+    function addDelayedPopover(selector) {
+      document.querySelectorAll(selector).forEach((popover) => {
+        let closeTimer;
+        const open = () => { clearTimeout(closeTimer); popover.classList.add("popover-open"); };
+        const closeLater = () => { closeTimer = setTimeout(() => popover.classList.remove("popover-open"), 1000); };
+        popover.addEventListener("mouseenter", open);
+        popover.addEventListener("mouseleave", closeLater);
+        popover.addEventListener("focusin", open);
+        popover.addEventListener("focusout", closeLater);
+      });
+    }
+    addDelayedPopover(".status-popover, .wcag-popover");
+  </script>
+</body>
+</html>
